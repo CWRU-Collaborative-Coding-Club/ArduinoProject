@@ -22,8 +22,9 @@ mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 mqttc.on_publish = on_publish
 
 mqttc.user_data_set(unacked_publish)
-mqttc.connect("172.20.122.218", 5000, 60)
+mqttc.connect("172.20.112.71", 1883, 60)
 mqttc.loop_start()
+print("Connected")
 
 # Our application produce some messages
 msg_info = mqttc.publish("paho/test/topic", "my message", qos=1)
@@ -31,10 +32,6 @@ unacked_publish.add(msg_info.mid)
 
 msg_info2 = mqttc.publish("paho/test/topic", "my message2", qos=1)
 unacked_publish.add(msg_info2.mid)
-
-# Wait for all message to be published
-while len(unacked_publish):
-    time.sleep(0.1)
 
 # Due to race-condition described above, the following way to wait for all publish is safer
 msg_info.wait_for_publish()
