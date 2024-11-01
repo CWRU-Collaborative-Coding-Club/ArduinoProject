@@ -1,20 +1,5 @@
-from flask import Flask
-from markupsafe import escape
 import paho.mqtt.client as mqtt
 import time
-
-app = Flask(__name__)
-@app.route("/<name>")
-def hello(name):
-    return f"Hello, {escape(name)}!"
-
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
-@app.route('/arduino/<int:arduino_id>/<int:red>/<int:green>/<int:blue>')
-def arduino(arduino_id, red, green, blue):
-    return f"Arduino ID: {escape(arduino_id)}, Red: {escape(red)}, Green: {escape(green)}, Blue: {escape(blue)})"
 
 def on_publish(client, userdata, mid, reason_code, properties):
     # reason_code and properties will only be present in MQTTv5. It's always unset in MQTTv3
@@ -37,7 +22,7 @@ mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 mqttc.on_publish = on_publish
 
 mqttc.user_data_set(unacked_publish)
-mqttc.connect("mqtt.eclipseprojects.io")
+mqttc.connect("172.20.122.218", 5000, 60)
 mqttc.loop_start()
 
 # Our application produce some messages
