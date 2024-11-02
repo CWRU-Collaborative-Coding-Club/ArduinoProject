@@ -1,6 +1,10 @@
-Authors: Willis Erdman, Cole Smith, Wyatt Samuels, and Luke Tierney
-Org: CWRU Collaborative Coding
-Version: 0.0.1
+# LED Matrix IoT
+
+**Authors: Willis Erdman, Cole Smith, Wyatt Samuels, and Luke Tierney**
+
+**Org: CWRU Collaborative Coding**
+
+**Version: 0.0.1**
 
 setup instructions:
 turning on mqtt broker
