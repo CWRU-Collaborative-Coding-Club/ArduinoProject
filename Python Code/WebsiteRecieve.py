@@ -15,8 +15,13 @@ def hello_world():
 @app.route('/iot/<path:input>')
 def iot(input):
     send(f"{escape(input)}")
-    return escape(f"{escape(input)}")
+    return f"{escape(input)}"
     
+@app.route('/iotPost', methods=['POST'])
+def iotPost():
+    requestData = request.method
+    return requestData
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
     
