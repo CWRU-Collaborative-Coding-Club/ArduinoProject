@@ -12,9 +12,9 @@ def hello(name):
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.route('/arduino/<int:arduino_id>/<int:red>/<int:green>/<int:blue>')
-def arduino(arduino_id, red, green, blue):
-    send(f"{arduino_id},{red},{green},{blue}")
-    return f"Arduino ID: {escape(arduino_id)}, Red: {escape(red)}, Green: {escape(green)}, Blue: {escape(blue)})"
+@app.route('/iot/<path:input>')
+def arduino(path):
+    send(f"{path}")
+    return f"{input}"
     
 
