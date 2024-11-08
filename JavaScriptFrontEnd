@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html>
-
-<!DOCTYPE html>
 <html lang="en">
 <head>
+  <pre id="arrayDisplay"></pre>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2D Array of Buttons</title>
   <style>
     .button-grid {
       display: grid;
-      grid-template-columns: repeat(12, auto); /* Change 3 to any number for a different column count */
+      grid-template-columns: repeat(12, auto);
       gap: 5px;
     }
     .button-grid button {
@@ -22,31 +20,54 @@
   </style>
 </head>
 <body>
+<button id="goButton">Go</button>
 
 <div class="button-grid" id="buttonGrid"></div>
 
 <script>
-  const rows = 8; // Number of rows
-  const cols = 12; // Number of columns
+  const rows = 8;
+  const cols = 12;
   const buttonGrid = document.getElementById("buttonGrid");
+
+  // Initialize 2D array to track selected buttons (0 = unselected, 1 = selected)
+  const selectedButtons = Array.from({ length: rows }, () => Array(cols).fill(0));
+  const nextSelectedButtons = Array.from({ length: rows }, () => Array(cols).fill(0));
+
+//Go button event listener
+const goButton = document.createElement("goButton");
+
+//event listener for go button
+goButton.addEventListener("click", () => {
+selectedButtons = nextSelectedButtons;
+console.log(selectedButtons);
+});
+
 
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
       const button = document.createElement("button");
-      
-      
-      // Add event listener to change color when clicked
+
+      // Add event listener to change color and update tracking array
       button.addEventListener("click", () => {
         if (button.style.backgroundColor === "red") {
           button.style.backgroundColor = "white";
+          nextSelectedButtons[i][j] = 0; // Unselected
         } else {
           button.style.backgroundColor = "red";
+          nextSelectedButtons[i][j] = 1; // Selected
         }
+
+        displayNextSelectedButtons();
       });
+
       buttonGrid.appendChild(button);
     }
   }
-</script>
 
+  function displayNextSelectedButtons() {
+  document.getElementById("arrayDisplay").textContent = nextSelectedButtons.map(row => row.join(" ")).join("\n");
+}
+
+</script>
 </body>
 </html>
