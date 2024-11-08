@@ -17,4 +17,7 @@ def arduino(input):
     send(f"{input}")
     return f"{input}"
     
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
+    
 
