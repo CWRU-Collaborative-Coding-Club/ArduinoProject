@@ -19,7 +19,7 @@ def iot(input):
     
 @app.route('/iotPost', methods=['POST'])
 def iotPost():
-    requestData = request.method
+    requestData = request.form
     return requestData
 
 if __name__ == '__main__':
