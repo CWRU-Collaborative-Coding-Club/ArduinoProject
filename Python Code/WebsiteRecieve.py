@@ -13,8 +13,8 @@ def hello_world():
     return "<p>Hello, World!</p>"
 
 @app.route('/iot/<path:input>')
-def arduino(path):
-    send(f"{path}")
+def arduino(input):
+    send(f"{input}")
     return f"{input}"
     
 
