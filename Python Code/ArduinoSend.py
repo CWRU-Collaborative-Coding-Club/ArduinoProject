@@ -23,19 +23,26 @@ def send(textToSend):
     mqttc.on_publish = on_publish
 
     mqttc.user_data_set(unacked_publish)
-    mqttc.connect("172.20.112.71", 1883, 60)
+    try:
+        mqttc.connect("172.20.112.71", 1883, 60)
+    except Exception as e:
+        print(f"Failed to connect to broker: {e}")
+        return
+
     mqttc.loop_start()
 
-    # Our application produce some messages
-    msg_info = mqttc.publish("paho/test/topic", textToSend, qos=1)
-    unacked_publish.add(msg_info.mid)
-
-    # Wait for all message to be published
-    while len(unacked_publish):
-        time.sleep(0.1)
-
-    # Due to race-condition described above, the following way to wait for all publish is safer
-    msg_info.wait_for_publish()
-
-    mqttc.disconnect()
-    mqttc.loop_stop()
+    try:
+        msg_info = mqttc.publish("paho/test/topic", textToSend, qos=1)
+        unacked_publish.add(msg_info.mid)
+        
+    except Exception as e:
+        print(f"Failed to publish message: {e}")
+    finally:
+        # Wait for all message to be published
+        while len(unacked_publish):
+            time.sleep(0.1)
+        # Due to race-condition described above, the following way to wait for all publish is safer
+        msg_info.wait_for_publish()
+        mqttc.disconnect()
+        mqttc.loop_stop()
+    
