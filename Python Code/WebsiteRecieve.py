@@ -1,5 +1,6 @@
 from flask import Flask
 from markupsafe import escape
+from ArduinoSend import send
 
 
 app = Flask(__name__)
@@ -13,5 +14,7 @@ def hello_world():
 
 @app.route('/arduino/<int:arduino_id>/<int:red>/<int:green>/<int:blue>')
 def arduino(arduino_id, red, green, blue):
+    send(f"{arduino_id},{red},{green},{blue}")
     return f"Arduino ID: {escape(arduino_id)}, Red: {escape(red)}, Green: {escape(green)}, Blue: {escape(blue)})"
+    
 
