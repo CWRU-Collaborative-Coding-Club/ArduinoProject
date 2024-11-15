@@ -12,14 +12,15 @@ def hello(name):
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.route('/iot/<path:input>')
-def iot(input):
-    send(f"{escape(input)}")
-    return f"{escape(input)}"
+#   @app.route('/iot/<path:input>')
+#   def iot(input):
+#       send(f"{escape(input)}")
+#       return f"{escape(input)}"
     
-@app.route('/iotPost', methods=['POST'])
+@app.route('/iot', methods=['POST'])
 def iotPost():
-    requestData = request.form
+    requestData = request.json
+    send(str(requestData))
     return requestData
 
 if __name__ == '__main__':
