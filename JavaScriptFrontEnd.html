@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <pre id="arrayDisplay"></pre>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2D Array of Buttons</title>
@@ -20,54 +19,74 @@
   </style>
 </head>
 <body>
-<button id="goButton">Go</button>
+  <button id="goButton">Go</button>
+  <pre id="arrayDisplay"></pre>
 
-<div class="button-grid" id="buttonGrid"></div>
+  <div class="button-grid" id="buttonGrid"></div>
 
-<script>
-  const rows = 8;
-  const cols = 12;
-  const buttonGrid = document.getElementById("buttonGrid");
+  <script>
+    const rows = 8;
+    const cols = 12;
+    const buttonGrid = document.getElementById("buttonGrid");
 
-  // Initialize 2D array to track selected buttons (0 = unselected, 1 = selected)
-  const selectedButtons = Array.from({ length: rows }, () => Array(cols).fill(0));
-  const nextSelectedButtons = Array.from({ length: rows }, () => Array(cols).fill(0));
+    // Initialize 2D arrays to track selected buttons (0 = unselected, 1 = selected)
+    let selectedButtons = Array.from({ length: rows }, () => Array(cols).fill(0));
+    let nextSelectedButtons = Array.from({ length: rows }, () => Array(cols).fill(0));
 
-//Go button event listener
-const goButton = document.createElement("goButton");
+    // Go button event listener
+    const goButton = document.getElementById("goButton");
+    goButton.addEventListener("click", () => {
+      // Deep copy nextSelectedButtons to selectedButtons
+      selectedButtons = nextSelectedButtons.map(row => [...row]);
+      console.log(JSON.stringify({ data: selectedButtons }))
+      displayArrays();
 
-//event listener for go button
-goButton.addEventListener("click", () => {
-selectedButtons = nextSelectedButtons;
-console.log(selectedButtons);
-});
-
-
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      const button = document.createElement("button");
-
-      // Add event listener to change color and update tracking array
-      button.addEventListener("click", () => {
-        if (button.style.backgroundColor === "red") {
-          button.style.backgroundColor = "white";
-          nextSelectedButtons[i][j] = 0; // Unselected
-        } else {
-          button.style.backgroundColor = "red";
-          nextSelectedButtons[i][j] = 1; // Selected
-        }
-
-        displayNextSelectedButtons();
+      // Send a POST request with selectedButtons
+      fetch('http://172.20.124.212:5000', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ data: selectedButtons })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
       });
+    });
 
-      buttonGrid.appendChild(button);
+    // Create the grid of buttons
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const button = document.createElement("button");
+
+        // Add event listener to change color and update tracking array
+        button.addEventListener("click", () => {
+          if (button.style.backgroundColor === "red") {
+            button.style.backgroundColor = "white";
+            nextSelectedButtons[i][j] = 0; // Unselected
+          } else {
+            button.style.backgroundColor = "red";
+            nextSelectedButtons[i][j] = 1; // Selected
+          }
+
+          displayArrays();
+        });
+
+        buttonGrid.appendChild(button);
+      }
     }
-  }
 
-  function displayNextSelectedButtons() {
-  document.getElementById("arrayDisplay").textContent = nextSelectedButtons.map(row => row.join(" ")).join("\n");
-}
-
-</script>
+    function displayArrays() {
+      document.getElementById("arrayDisplay").textContent =
+        "selectedButtons:\n" +
+        selectedButtons.map(row => row.join(" ")).join("\n") +
+        "\n\nnextSelectedButtons:\n" +
+        nextSelectedButtons.map(row => row.join(" ")).join("\n");
+    }
+  </script>
 </body>
 </html>
