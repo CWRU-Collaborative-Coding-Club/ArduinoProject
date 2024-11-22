@@ -24,7 +24,7 @@ def send(textToSend):
 
     mqttc.user_data_set(unacked_publish)
     try:
-        mqttc.connect("172.20.124.121", 1883, 60)
+        mqttc.connect("172.20.116.111", 1883, 60)
     except Exception as e:
         print(f"Failed to connect to broker: {e}")
         return

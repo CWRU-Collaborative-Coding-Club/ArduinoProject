@@ -19,11 +19,20 @@ def hello(name):
 #       send(f"{escape(input)}")
 #       return f"{escape(input)}"
     
+def JSONtoInts(json):
+    Array2d = json['data']
+    String = ""
+    for row in Array2d:
+        for element in row:
+            String += str(element)
+    print(String)
+    send(str(String))
+
 @app.route('/', methods=['POST'])
 def iot():
     requestData = request.json
     print(requestData)
-    send(str(requestData))
+    JSONtoInts(requestData)
     return requestData
 
 if __name__ == '__main__':
