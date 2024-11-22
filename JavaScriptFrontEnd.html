@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2D Array of Buttons</title>
   <style>
+    body {
+      font-family: papyrus;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .container {
+      display: flex;
+      gap: 20px;
+      margin: 20px;
+    }
+    .instructions {
+      max-width: 600px;
+    }
     .button-grid {
       display: grid;
       grid-template-columns: repeat(12, auto);
@@ -15,14 +31,43 @@
       background: none;
       padding: 16px;
       font-size: 16px;
+      cursor: pointer;
+      width: 10px;
+      height: 10px;
+    }
+    .button-grid button[data-selected="true"] {
+      background-color: #0097FE;
+    }
+    .button-grid button[data-selected="false"] {
+      background-color: white;
+    }
+    img {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 20px auto;
+    }
+    #goButton {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <button id="goButton">Go</button>
-  <pre id="arrayDisplay"></pre>
-
-  <div class="button-grid" id="buttonGrid"></div>
+  <div class="container">
+    <div class="instructions">
+      <h1>Arduino Board</h1>
+      <p>Hello user, you are using an Arduino board.</p>
+      <p>Instructions:</p>
+      <p>Select the buttons you wish to light up, then click go when ready!</p>
+      <img src="https://raw.githubusercontent.com/CWRU-Collaborative-Coding-Club/ArduinoProject/f5c4c159418e45c63e388d70bf85411635c0aaec/Final_Logo_White_Background.png" 
+           alt="club logo">
+      <button id="goButton">Go</button>
+    </div>
+    <div class="button-grid" id="buttonGrid"></div>
+  </div>
 
   <script>
     const rows = 8;
@@ -38,11 +83,10 @@
     goButton.addEventListener("click", () => {
       // Deep copy nextSelectedButtons to selectedButtons
       selectedButtons = nextSelectedButtons.map(row => [...row]);
-      console.log(JSON.stringify({ data: selectedButtons }))
-      displayArrays();
+      console.log(JSON.stringify({ data: selectedButtons }));
 
       // Send a POST request with selectedButtons
-      fetch('http://172.20.124.212:5000', {
+      fetch('http://172.20.115.182:5000', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -62,30 +106,21 @@
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
         const button = document.createElement("button");
+        button.dataset.selected = "false";
 
         // Add event listener to change color and update tracking array
         button.addEventListener("click", () => {
-          if (button.style.backgroundColor === "red") {
-            button.style.backgroundColor = "white";
-            nextSelectedButtons[i][j] = 0; // Unselected
+          if (button.dataset.selected === "true") {
+            button.dataset.selected = "false"; // Unselected
+            nextSelectedButtons[i][j] = 0;
           } else {
-            button.style.backgroundColor = "red";
-            nextSelectedButtons[i][j] = 1; // Selected
+            button.dataset.selected = "true"; // Selected
+            nextSelectedButtons[i][j] = 1;
           }
-
-          displayArrays();
         });
 
         buttonGrid.appendChild(button);
       }
-    }
-
-    function displayArrays() {
-      document.getElementById("arrayDisplay").textContent =
-        "selectedButtons:\n" +
-        selectedButtons.map(row => row.join(" ")).join("\n") +
-        "\n\nnextSelectedButtons:\n" +
-        nextSelectedButtons.map(row => row.join(" ")).join("\n");
     }
   </script>
 </body>
