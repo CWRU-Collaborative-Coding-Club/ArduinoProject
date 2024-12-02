@@ -1,6 +1,6 @@
 # LED Matrix IoT
 
-**Authors: Willis Erdman, Cole Smith, Wyatt Samuels, and Luke Tierney**
+**Authors: Willis Erdman, Cameron Edwards, Wyatt Samuels, and Luke Tierney**
 
 **Org: CWRU Collaborative Coding**
 
