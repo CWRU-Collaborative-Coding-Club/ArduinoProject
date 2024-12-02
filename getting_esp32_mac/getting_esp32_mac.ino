@@ -1,30 +1,56 @@
 #include <ArduinoMqttClient.h>
 #include <WiFi.h>
 #include "arduino_secrets.h"
+#include "Arduino_LED_Matrix.h"
 
-///////please enter your sensitive data in the Secret tab/arduino_secrets.h
-char ssid[] = SECRET_SSID;        // your network SSID
-char pass[] = SECRET_PASS;    // your network password
+ArduinoLEDMatrix matrix;
+char ssid[] = SECRET_SSID;
+char pass[] = SECRET_PASS;
 
 WiFiClient wifiClient;
 MqttClient mqttClient(wifiClient);
 
-const char broker[] = "test.mosquitto.org";
+const char broker[] = "172.20.116.111";
 int        port     = 1883;
-const char topic[]  = "real_unique_topic";
-const char topic2[]  = "real_unique_topic_2";
-const char topic3[]  = "real_unique_topic_3";
+const char topic[]  = "paho/test/topic";
+
+const int ROWS = 8;
+const int COLUMNS = 12;
+byte matrixNextFrame[ROWS][COLUMNS];
+
+void printMacAddress(byte mac[]) {
+  for (int i = 0; i < 6; i++) {
+    if (i > 0) {
+      Serial.print(":");
+    }
+    if (mac[i] < 16) {
+      Serial.print("0");
+    }
+    Serial.print(mac[i], HEX);
+  }
+  Serial.println();
+}
 
 void setup() {
+  matrix.begin();
   //Initialize serial and wait for port to open:
-  Serial.begin(9600);
+  Serial.begin(115200);
+
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
+
   // attempt to connect to Wifi network:
-  Serial.print("Attempting to connect to SSID: ");
+  Serial.println("Attempting to connect to SSID: ");
   Serial.println(ssid);
-  while (WiFi.begin(ssid, pass) != WL_CONNECTED) {
+
+  byte mac[6];
+  WiFi.macAddress(mac);
+  Serial.print("MAC address: ");
+  printMacAddress(mac);
+
+
+  while (WiFi.begin(ssid) != WL_CONNECTED) {
     // failed, retry
     Serial.print(".");
     delay(5000);
@@ -55,18 +81,12 @@ void setup() {
 
   // subscribe to a topic
   mqttClient.subscribe(topic);
-  mqttClient.subscribe(topic2);
-  mqttClient.subscribe(topic3);
 
   // topics can be unsubscribed using:
   // mqttClient.unsubscribe(topic);
 
   Serial.print("Topic: ");
   Serial.println(topic);
-  Serial.print("Topic: ");
-  Serial.println(topic2);
-  Serial.print("Topic: ");
-  Serial.println(topic3);
 
   Serial.println();
 }
@@ -80,15 +100,35 @@ void loop() {
 void onMqttMessage(int messageSize) {
   // we received a message, print out the topic and contents
   Serial.println("Received a message with topic '");
-  Serial.print(mqttClient.messageTopic());
-  Serial.print("', length ");
-  Serial.print(messageSize);
-  Serial.println(" bytes:");
 
+  // Serial.println(" bytes:");
+
+  String msg = "";
   // use the Stream interface to print the contents
   while (mqttClient.available()) {
-    Serial.print((char)mqttClient.read());
+    msg += (char)mqttClient.read();
   }
+  Serial.println(msg);
   Serial.println();
-  Serial.println();
+
+  int index = 0; // Index for the string
+  for (int i = 0; i < ROWS; i++) {
+      for (int j = 0; j < COLUMNS; j++) {
+          if (index < msg.length()) {
+              matrixNextFrame[i][j] = msg[index] - '0'; // Convert char to int
+              index++;
+          } else {
+              matrixNextFrame[i][j] = 0; // Default value if string is too short
+          }
+      }
+  }
+
+  Serial.print(msg);
+  updateLEDArray(matrixNextFrame);
+  
+  //return msg;
+}
+
+void updateLEDArray(byte nextFrame[ROWS][COLUMNS]) {
+  matrix.renderBitmap(nextFrame, 8, 12);
 }
