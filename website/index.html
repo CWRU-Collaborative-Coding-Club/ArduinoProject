@@ -23,7 +23,8 @@
             }
             .button-grid {
                 display: grid;
-                grid-template-columns: repeat(12, auto);
+                grid-template-columns: repeat(12, 40px);
+                grid-template-rows: repeat(8, 40px);
                 gap: 5px;
             }
             .button-grid button {
@@ -71,7 +72,10 @@
                 />
                 <button id="goButton">Go</button>
             </div>
-            <div class="button-grid" id="buttonGrid"></div>
+            <div>
+                <div style="height: 150px"></div>
+                <div class="button-grid" id="buttonGrid"></div>
+            </div>
         </div>
 
         <script>
@@ -95,7 +99,7 @@
                 console.log(JSON.stringify({ data: selectedButtons }));
 
                 // Send a POST request with selectedButtons
-                fetch("https://35.206.65.102:5000", {
+                fetch("https://ccciot.williserdman.com", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

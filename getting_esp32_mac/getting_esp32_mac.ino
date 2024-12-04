@@ -10,7 +10,7 @@ char pass[] = SECRET_PASS;
 WiFiClient wifiClient;
 MqttClient mqttClient(wifiClient);
 
-const char broker[] = "172.20.116.111";
+const char broker[] = "35.206.65.102";
 int        port     = 1883;
 const char topic[]  = "paho/test/topic";
 
@@ -58,6 +58,7 @@ void setup() {
 
   Serial.println("You're connected to the network");
   Serial.println();
+  delay(5000);
 
   Serial.print("Attempting to connect to the MQTT broker: ");
   Serial.println(broker);
